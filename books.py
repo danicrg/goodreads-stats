@@ -93,6 +93,6 @@ def get_books_df(user_id):
 	df['date_added'] = pd.to_datetime(df['date_added'], format='%a %b %d %H:%M:%S %z %Y', errors='coerce').apply(lambda dt: dt.replace(tzinfo=None))
 	df['date_updated'] = pd.to_datetime(df['date_updated'], format='%a %b %d %H:%M:%S %z %Y', errors='coerce').apply(lambda dt: dt.replace(tzinfo=None))
 
-	df = df[~df['started_at'].isin([pd.NaT])]
-
 	return df
+
+	
