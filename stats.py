@@ -80,7 +80,21 @@ st.markdown(table)
 ###############
 
 st.subheader(f"Pages per year")
+st.markdown(f"Number of pages read per year")
 
-pages_per_year = books.rename(columns={'num_pages': ''}).groupby(books['read_at'].dt.year)[''].sum()
+pages_per_year = books.groupby(books['read_at'].dt.year)['num_pages'].sum()
 
-st.line_chart(pages_per_year)
+st.vega_lite_chart(pages_per_year.reset_index(), {
+	"width": "container",
+	"mark": {
+		"type": "line",
+		"interpolate": "monotone"
+	},
+	"encoding": {
+		"x": {"type": "quantitative", "field": "read_at", 'title' : 'Year'},
+		"y": {"type": "quantitative", "field": "num_pages", 'title' : 'Number of Pages'}
+	},
+	
+	}, use_container_width=True)
+
+
