@@ -30,18 +30,42 @@ def load_data(user_id=USER_ID):
 
 st.title("Goodreads Stats")
 
-user_id = st.text_input("Goodreads User ID", USER_ID)
+
+
+user_id = st.sidebar.text_input("Goodreads User ID", USER_ID)
 
 books = load_data(user_id)
 
 if st.checkbox('Show Data'):   
 	books
 
+###############
+# Per Year #
+###############
+
+st.subheader(f"Pages per year")
+st.markdown(f"Number of pages read per year")
+
+pages_per_year = books.groupby(books['read_at'].dt.year)['num_pages'].sum()
+
+st.vega_lite_chart(pages_per_year.reset_index(), {
+	"width": "container",
+	"mark": {
+		"type": "line",
+		"interpolate": "monotone"
+	},
+	"encoding": {
+		"x": {"type": "quantitative", "field": "read_at", 'title' : 'Year'},
+		"y": {"type": "quantitative", "field": "num_pages", 'title' : 'Number of Pages'}
+	},
+	
+	}, use_container_width=True)
+
 #################
 # MOST ENGAGING #
 #################
 
-n_results = int(st.slider("Number of results per stat", 1, 20, 5))
+n_results = int(st.sidebar.slider("Number of results per stat", 1, 20, 5))
 
 st.subheader(f"Your {n_results} most engaging books")
 st.markdown(f"Calculated by pages read per day.")
@@ -75,26 +99,5 @@ for index, row in favourite_books.iterrows():
 
 st.markdown(table)
 
-###############
-# Per Year #
-###############
-
-st.subheader(f"Pages per year")
-st.markdown(f"Number of pages read per year")
-
-pages_per_year = books.groupby(books['read_at'].dt.year)['num_pages'].sum()
-
-st.vega_lite_chart(pages_per_year.reset_index(), {
-	"width": "container",
-	"mark": {
-		"type": "line",
-		"interpolate": "monotone"
-	},
-	"encoding": {
-		"x": {"type": "quantitative", "field": "read_at", 'title' : 'Year'},
-		"y": {"type": "quantitative", "field": "num_pages", 'title' : 'Number of Pages'}
-	},
-	
-	}, use_container_width=True)
 
 
